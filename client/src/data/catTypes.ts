@@ -72,28 +72,35 @@ export const catTypes: CatType[] = [
   }
 ];
 
-export function calculateCatType(answers: string[]): CatType {
+import { questions } from './questions';
+import { questionsEn } from './questionsEn';
+import { catTypesEn } from './catTypesEn';
+
+export function calculateCatType(answers: string[], language: "ko" | "en" = "ko"): CatType {
   const traitCounts: Record<string, number> = {};
+  
+  const currentQuestions = language === "ko" ? questions : questionsEn;
+  const currentCatTypes = language === "ko" ? catTypes : catTypesEn;
   
   // Count traits from answers
   answers.forEach((answer, questionIndex) => {
-    const question = questions[questionIndex];
-    const selectedOption = question.options.find(opt => opt.value === answer);
+    const question = currentQuestions[questionIndex];
+    const selectedOption = question.options.find((opt: any) => opt.value === answer);
     
     if (selectedOption) {
-      selectedOption.traits.forEach(trait => {
+      selectedOption.traits.forEach((trait: string) => {
         traitCounts[trait] = (traitCounts[trait] || 0) + 1;
       });
     }
   });
   
   // Find the cat type with the most matching traits
-  let bestMatch = catTypes[0];
+  let bestMatch = currentCatTypes[0];
   let bestScore = 0;
   
-  catTypes.forEach(catType => {
+  currentCatTypes.forEach((catType: any) => {
     let score = 0;
-    catType.matchingTraits.forEach(trait => {
+    catType.matchingTraits.forEach((trait: string) => {
       score += traitCounts[trait] || 0;
     });
     
@@ -105,6 +112,3 @@ export function calculateCatType(answers: string[]): CatType {
   
   return bestMatch;
 }
-
-// Import questions for the calculation function
-import { questions } from './questions';

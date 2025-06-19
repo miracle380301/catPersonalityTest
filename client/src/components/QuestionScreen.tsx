@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Question } from "@/data/questions";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface QuestionScreenProps {
   question: Question;
@@ -16,6 +17,7 @@ export default function QuestionScreen({
   onAnswer,
   selectedAnswer 
 }: QuestionScreenProps) {
+  const { t } = useLanguage();
   const progress = ((currentQuestion + 1) / totalQuestions) * 100;
 
   return (
@@ -23,7 +25,7 @@ export default function QuestionScreen({
       {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-600">진행도</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{t('progress')}</span>
           <span className="text-sm font-medium" style={{ color: 'var(--cat-peach)' }}>
             {currentQuestion + 1}/{totalQuestions}
           </span>
@@ -52,12 +54,12 @@ export default function QuestionScreen({
       
       {/* Question Card */}
       <motion.div 
-        className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-6"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-100 dark:border-gray-700 p-6 mb-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
           {question.text}
         </h3>
         
@@ -69,8 +71,8 @@ export default function QuestionScreen({
               onClick={() => onAnswer(option.value)}
               className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                 selectedAnswer === option.value
-                  ? 'border-cat-peach bg-cat-cream'
-                  : 'border-gray-200 hover:border-cat-peach hover:bg-cat-cream'
+                  ? 'border-cat-peach bg-cat-cream dark:bg-gray-700'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-cat-peach hover:bg-cat-cream dark:hover:bg-gray-700'
               }`}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -83,10 +85,10 @@ export default function QuestionScreen({
                   className={`w-6 h-6 rounded-full border-2 mr-3 flex-shrink-0 transition-all duration-200 ${
                     selectedAnswer === option.value
                       ? 'bg-cat-peach border-cat-peach'
-                      : 'border-gray-300'
+                      : 'border-gray-300 dark:border-gray-500'
                   }`}
                 />
-                <span className="text-gray-700">{option.text}</span>
+                <span className="text-gray-700 dark:text-gray-200">{option.text}</span>
               </div>
             </motion.button>
           ))}

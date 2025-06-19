@@ -4,16 +4,23 @@ import WelcomeScreen from "@/components/WelcomeScreen";
 import QuestionScreen from "@/components/QuestionScreen";
 import LoadingScreen from "@/components/LoadingScreen";
 import ResultScreen from "@/components/ResultScreen";
+import ThemeToggle from "@/components/ThemeToggle";
+import LanguageToggle from "@/components/LanguageToggle";
 import { questions } from "@/data/questions";
+import { questionsEn } from "@/data/questionsEn";
 import { calculateCatType, CatType } from "@/data/catTypes";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Screen = 'welcome' | 'question' | 'loading' | 'result';
 
 export default function CatTest() {
+  const { language, t } = useLanguage();
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [result, setResult] = useState<CatType | null>(null);
+  
+  const currentQuestions = language === "ko" ? questions : questionsEn;
 
   const handleStartTest = () => {
     setCurrentScreen('question');
@@ -28,7 +35,7 @@ export default function CatTest() {
 
     // Auto-advance after a short delay for visual feedback
     setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
+      if (currentQuestion < currentQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Show loading and calculate results
@@ -36,7 +43,7 @@ export default function CatTest() {
         
         // Calculate result after loading delay
         setTimeout(() => {
-          const catResult = calculateCatType(newAnswers);
+          const catResult = calculateCatType(newAnswers, language);
           setResult(catResult);
           setCurrentScreen('result');
         }, 2000);
@@ -54,25 +61,27 @@ export default function CatTest() {
   const handleShare = () => {
     if (!result) return;
     
-    const shareText = `나는 ${result.name}래요! 당신도 테스트해보세요!`;
+    const shareText = t('shareText').replace('{result}', result.name);
     const shareUrl = window.location.href;
     
     if (navigator.share) {
       navigator.share({
-        title: '나만 고양이 없어? 내 마음 속 고양이 찾기',
+        title: t('title'),
         text: shareText,
         url: shareUrl
       });
     } else {
       // Fallback for browsers that don't support Web Share API
       navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-      // You could add a toast notification here
-      alert('결과가 클립보드에 복사되었습니다!');
+      alert(t('copied'));
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen shadow-xl relative overflow-hidden">
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-900 min-h-screen shadow-xl relative overflow-hidden">
+      <ThemeToggle />
+      <LanguageToggle />
+      
       <div 
         className="absolute inset-0 bg-gradient-to-br opacity-30 pointer-events-none"
         style={{
@@ -103,9 +112,9 @@ export default function CatTest() {
               transition={{ duration: 0.3 }}
             >
               <QuestionScreen
-                question={questions[currentQuestion]}
+                question={currentQuestions[currentQuestion]}
                 currentQuestion={currentQuestion}
-                totalQuestions={questions.length}
+                totalQuestions={currentQuestions.length}
                 onAnswer={handleAnswer}
                 selectedAnswer={answers[currentQuestion]}
               />
@@ -143,8 +152,8 @@ export default function CatTest() {
       </div>
       
       {/* Footer */}
-      <div className="p-6 text-center text-xs text-gray-500 relative z-10">
-        <p>재미로 즐기는 심리테스트예요 🐾</p>
+      <div className="p-6 text-center text-xs text-gray-500 dark:text-gray-400 relative z-10">
+        <p>{t('forFun')}</p>
       </div>
     </div>
   );

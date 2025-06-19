@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CatType, catTypes } from "@/data/catTypes";
+import { catTypesEn } from "@/data/catTypesEn";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ResultScreenProps {
   result: CatType;
@@ -9,7 +11,9 @@ interface ResultScreenProps {
 }
 
 export default function ResultScreen({ result, onRestart, onShare }: ResultScreenProps) {
-  const otherCatTypes = catTypes.filter(cat => cat.id !== result.id).slice(0, 3);
+  const { t, language } = useLanguage();
+  const currentCatTypes = language === "ko" ? catTypes : catTypesEn;
+  const otherCatTypes = currentCatTypes.filter(cat => cat.id !== result.id).slice(0, 3);
 
   return (
     <div className="p-6">
@@ -24,7 +28,7 @@ export default function ResultScreen({ result, onRestart, onShare }: ResultScree
         transition={{ duration: 0.5 }}
       >
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">당신의 내면 고양이는</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">{t('yourCat')}</h2>
           <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--cat-peach)' }}>
             {result.name}
           </h1>
@@ -46,13 +50,13 @@ export default function ResultScreen({ result, onRestart, onShare }: ResultScree
         
         {/* Personality Description */}
         <motion.div 
-          className="bg-white rounded-xl p-4 mb-4"
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">성격 특징</h3>
-          <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">{t('personality')}</h3>
+          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
             {result.description}
           </p>
           
@@ -61,7 +65,7 @@ export default function ResultScreen({ result, onRestart, onShare }: ResultScree
             {result.traits.map((trait, index) => (
               <motion.span
                 key={trait}
-                className="px-3 py-1 text-gray-700 text-xs rounded-full"
+                className="px-3 py-1 text-gray-700 dark:text-gray-800 text-xs rounded-full"
                 style={{ backgroundColor: `var(--cat-${['mint', 'pink', 'beige', 'cream'][index % 4]})` }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -75,17 +79,17 @@ export default function ResultScreen({ result, onRestart, onShare }: ResultScree
         
         {/* Compatibility */}
         <motion.div 
-          className="bg-white rounded-xl p-4 mb-6"
+          className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">잘 맞는 고양이 친구</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">{t('compatible')}</h3>
           <div className="flex items-center space-x-3">
             <span className="text-2xl">😺</span>
             <div>
-              <p className="font-medium text-gray-800">{result.compatible}</p>
-              <p className="text-xs text-gray-600">서로의 성격을 잘 이해해줘요</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200">{result.compatible}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{t('compatibleDesc')}</p>
             </div>
           </div>
         </motion.div>
@@ -105,42 +109,42 @@ export default function ResultScreen({ result, onRestart, onShare }: ResultScree
             background: 'linear-gradient(135deg, var(--cat-peach) 0%, var(--cat-coral) 100%)'
           }}
         >
-          결과 공유하기 📤
+          {t('shareResult')}
         </Button>
         
         <Button 
           onClick={onRestart}
-          className="w-full font-semibold py-4 px-6 rounded-2xl border-2 bg-white hover:bg-gray-50"
+          className="w-full font-semibold py-4 px-6 rounded-2xl border-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
           style={{
             color: 'var(--cat-peach)',
             borderColor: 'var(--cat-peach)'
           }}
         >
-          다시 테스트하기
+          {t('retakeTest')}
         </Button>
       </motion.div>
       
       {/* Other Cat Types Preview */}
       <motion.div 
-        className="mt-8 p-4 bg-gray-50 rounded-xl"
+        className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
       >
-        <h4 className="text-sm font-semibold text-gray-700 mb-3 text-center">
-          다른 고양이 성격들도 궁금하다면?
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">
+          {t('otherCats')}
         </h4>
         <div className="grid grid-cols-3 gap-3 text-center">
           {otherCatTypes.map((catType, index) => (
             <motion.div
               key={catType.id}
-              className="bg-white p-2 rounded-lg"
+              className="bg-white dark:bg-gray-700 p-2 rounded-lg"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
             >
               <span className="text-lg">{catType.emoji}</span>
-              <p className="text-xs text-gray-600 mt-1">{catType.name}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{catType.name}</p>
             </motion.div>
           ))}
         </div>

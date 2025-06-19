@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function LoadingScreen() {
+  const { t } = useLanguage();
+  
   return (
     <div className="p-6 text-center">
       <div className="py-20">
@@ -21,12 +24,12 @@ export default function LoadingScreen() {
         </motion.div>
         
         <motion.h3 
-          className="text-xl font-semibold text-gray-800 mb-4"
+          className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          당신의 고양이를 찾고 있어요...
+          {t('finding')}
         </motion.h3>
         
         <div className="w-32 h-2 bg-gray-200 rounded-full mx-auto">
